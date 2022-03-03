@@ -1,0 +1,25 @@
+{
+  "name": "hotfix-action",
+  "version": "0.0.1",
+  "description": "Github action that will handle a hotfix in the Release Flow.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/loopsocial/hotfix-action.git"
+  },
+  "keywords": [
+    "github",
+    "action",
+    "loopsocial",
+    "firework"
+  ],
+  "author": "Deric Walintukan <deric@fireworkhq.com>",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/loopsocial/hotfix-action/issues"
+  },
+  "homepage": "https://github.com/loopsocial/hotfix-action#readme"
+}
