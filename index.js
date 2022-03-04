@@ -70,14 +70,14 @@ const createIssue = async (octokit, currentTag, hotfixTag) => {
   `
 
   const { owner, repo } = github.context.repo
-  const { data: { html_url: htmlUrl } } = await octokit.rest.issues.create({
+  const { data: { html_url: issueUrl } } = await octokit.rest.issues.create({
     owner,
     repo,
     title: `Hotfix for ${hotfixTag}`,
     labels: ['RC'],
     body
   })
-  return htmlUrl
+  return issueUrl
 }
 
 /**
@@ -93,7 +93,7 @@ const postToSlack = async (currentTag, hotfixTag, issueUrl) => {
         "type": "header",
         "text": {
           "type": "plain_text",
-          "text": `[${hotfixTag}] Hotfix branch created 🩹`
+          "text": `[${hotfixTag}] Hotfix branch created 🔥`
         }
       },
       {
@@ -115,15 +115,8 @@ const postToSlack = async (currentTag, hotfixTag, issueUrl) => {
     ]
   }
 
-  const { owner, repo } = github.context.repo
-  const webhookUrl = await octokit.rest.actions.getRepoSecret({
-    owner,
-    repo,
-    secret_name: 'SLACK_WEBHOOK_URL',
-  })
-
-  const request = new Request(webhookUrl, { method: 'POST', body })
-  await fetch(request)
+  const webhookUrl = getInput('slack-webhook-url')
+  await axios.post(webhookUrl, body)
 }
 
 const run = async () => {
@@ -140,7 +133,7 @@ const run = async () => {
     await createReleaseBranch(octokit, currentTag)
 
     // Create issue
-    const issueUrl = await createIssue(octokit, latestTag, nextTag, commitDiff)
+    const issueUrl = await createIssue(octokit, currentTag, hotfixTag)
 
     // Send webhook to Slack
     await postToSlack(nextTag, issueUrl)
