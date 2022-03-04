@@ -12,6 +12,11 @@ const getInput = (key) => {
   return input
 }
 
+/**
+ * Gets the hotfix tag name.
+ * @param {string} tag Existing tag to apply a hotfix
+ * @returns {string} Hotfix tag name
+ */
 const getHotfixTag = (tag) => `${tag}-hotfix`
 
 /**
@@ -20,7 +25,7 @@ const getHotfixTag = (tag) => `${tag}-hotfix`
  * @param {string} tag Current tag
  */
 const createReleaseBranch = async (octokit, tag) => {
-  const { owner, repo } = github.context.repo()
+  const { owner, repo } = github.context.repo
 
   // Get the current ref
   const { data: { object: { sha } } } = await octokit.rest.git.getRef({
@@ -64,15 +69,15 @@ const createIssue = async (octokit, currentTag, hotfixTag) => {
   - To cancel the push: Close the issue directly.
   `
 
-  const { owner, repo } = github.context.repo()
-  const { data: { html_url } } = await octokit.rest.issues.create({
+  const { owner, repo } = github.context.repo
+  const { data: { html_url: htmlUrl } } = await octokit.rest.issues.create({
     owner,
     repo,
     title: `Hotfix for ${hotfixTag}`,
     labels: ['RC'],
     body
   })
-  return html_url
+  return htmlUrl
 }
 
 /**
@@ -110,7 +115,7 @@ const postToSlack = async (currentTag, hotfixTag, issueUrl) => {
     ]
   }
 
-  const { owner, repo } = github.context.repo()
+  const { owner, repo } = github.context.repo
   const webhookUrl = await octokit.rest.actions.getRepoSecret({
     owner,
     repo,
@@ -126,14 +131,14 @@ const run = async () => {
     // Get token and init
     const token = getInput('github-token')
     const octokit = github.getOctokit(token)
-    
+
     // Get tags
     const currentTag = getInput('tag')
     const hotfixTag = getHotfixTag(currentTag)
 
     // Create release branch
     await createReleaseBranch(octokit, currentTag)
-  
+
     // Create issue
     const issueUrl = await createIssue(octokit, latestTag, nextTag, commitDiff)
 
