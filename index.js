@@ -22,23 +22,23 @@ const getHotfixTag = (tag) => `${tag}-hotfix`
 /**
  * Creates the release branch.
  * @param {object} octokit Octokit
- * @param {string} tag Current tag
+ * @param {string} currentTag Current tag
  */
-const createReleaseBranch = async (octokit, tag) => {
+const createReleaseBranch = async (octokit, currentTag) => {
   const { owner, repo } = github.context.repo
 
   // Get the current ref
   const { data: { object: { sha } } } = await octokit.rest.git.getRef({
     owner,
     repo,
-    ref: `tags/${tag}`
+    ref: `tags/${currentTag}`
   })
 
   // Create the hotfix ref
   await octokit.rest.git.createRef({
     owner,
     repo,
-    ref: `refs/heads/hotfix/${tag}`,
+    ref: `refs/heads/hotfix/${currentTag}`,
     sha
   })
 }
@@ -136,7 +136,7 @@ const run = async () => {
     const issueUrl = await createIssue(octokit, currentTag, hotfixTag)
 
     // Send webhook to Slack
-    await postToSlack(nextTag, issueUrl)
+    await postToSlack(currentTag, hotfixTag, issueUrl)
   } catch (error) {
     core.setFailed(error.message)
   }
