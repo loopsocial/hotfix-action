@@ -1,5 +1,5 @@
 name: "Hotfix Action"
-description: Github action that will handle a hotfix in the Release Flow."
+description: Github Action that will handle a hotfix in the Release Flow."
 inputs:
   github-token:
     description: "Access token for your repository"
