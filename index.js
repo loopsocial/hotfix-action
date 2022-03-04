@@ -1,5 +1,6 @@
 const github = require('@actions/github')
 const core = require('@actions/core')
+const axios = require('axios')
 
 /**
  * Gets the input from the used action.
@@ -33,7 +34,7 @@ const createReleaseBranch = async (octokit, currentTag) => {
     repo,
     ref: `tags/${currentTag}`
   })
-
+  
   // Create the hotfix ref
   await octokit.rest.git.createRef({
     owner,
@@ -73,7 +74,7 @@ const createIssue = async (octokit, currentTag, hotfixTag) => {
   const { data: { html_url: issueUrl } } = await octokit.rest.issues.create({
     owner,
     repo,
-    title: `Hotfix for ${hotfixTag}`,
+    title: `Hotfix ${currentTag}`,
     labels: ['RC'],
     body
   })
@@ -93,20 +94,20 @@ const postToSlack = async (currentTag, hotfixTag, issueUrl) => {
         "type": "header",
         "text": {
           "type": "plain_text",
-          "text": `[${hotfixTag}] Hotfix branch created 🔥`
+          "text": `[${hotfixTag}] Hotfix created 🔥`
         }
       },
       {
         "type": "section",
         "text": {
           "type": "mrkdwn",
-          "text": `Please commit your fixes to hotfix/${currentTag}.`
+          "text": `Please commit your fixes to \`hotfix/${currentTag}\`.`
         },
         "accessory": {
           "type": "button",
           "text": {
             "type": "plain_text",
-            "text": "Open issue"
+            "text": "Go"
           },
           "url": `${issueUrl}`,
           "action_id": "button-action"
