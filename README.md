@@ -23,9 +23,11 @@ URL of the Slack webhook to send the message to.
 **Required**
 Existing tagged release to apply the hotfix to.
 
-## Usage
+## Example Usage
 
 ```yaml
+name: Hotfix
+
 on:
   workflow_dispatch:
     inputs:
@@ -34,9 +36,16 @@ on:
         required: true
         type: string
 
-uses: loopsocial/hotfix-action@v1.0.0
-with:
-  github-token: ${{ secrets.GITHUB_TOKEN }}
-  slack-webhook-url: ${{ secrets.SLACK_WEBHOOK_URL }}
-  tag: ${{ github.event.inputs.tag }}
+jobs:
+  hotfix:
+    runs-on: ubuntu-latest
+    name: Hotfix
+    steps:
+      - name: Hotfix
+        id: hotfix
+        uses: loopsocial/hotfix-action@v1.0.1
+        with:
+          github-token: ${{ secrets.WORKFLOW_TOKEN }}
+          slack-webhook-url: ${{ secrets.SLACK_WEBHOOK_URL }}
+          tag: ${{ github.event.inputs.tag }}
 ```
