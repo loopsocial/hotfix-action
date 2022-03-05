@@ -22,10 +22,11 @@ const getHotfixTag = (tag) => `${tag}-hotfix`
 
 /**
  * Creates the release branch.
- * @param {object} octokit Octokit
  * @param {string} currentTag Current tag
  */
-const createReleaseBranch = async (octokit, currentTag) => {
+const createReleaseBranch = async (currentTag) => {
+  const token = getInput('workflow-token')
+  const octokit = github.getOctokit(token)
   const { owner, repo } = github.context.repo
 
   // Get the current ref
@@ -131,7 +132,7 @@ const run = async () => {
     const hotfixTag = getHotfixTag(currentTag)
 
     // Create release branch
-    await createReleaseBranch(octokit, currentTag)
+    await createReleaseBranch(currentTag)
 
     // Create issue
     const issueUrl = await createIssue(octokit, currentTag, hotfixTag)
