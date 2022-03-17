@@ -61,13 +61,13 @@ const createIssue = async (octokit, currentTag, hotfixTag) => {
     '\n' +
     '## Metadata\n' +
     '\n' +
-    '- Release tag: ${hotfixTag}\n' +
-    '- Branch: hotfix/${currentTag}\n' +
+    `- Release tag: ${hotfixTag}\n` +
+    `- Branch: hotfix/${currentTag}\n` +
     '\n' +
     '## Actions\n' +
     '\n' +
     '- To add fixes:\n' +
-    '\t1. `git checkout hotfix/${currentTag}`\n' +
+    `\t1. \`git checkout hotfix/${currentTag}\`\n` +
     '\t2. Check in fixes to the release branch.\n' +
     '\t3. (If applied) Cherry-pick the fix to `master`.\n' +
     '- To approve the push: Add `QA Approved` label and close the issue.\n' + 
