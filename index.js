@@ -56,23 +56,22 @@ const createReleaseBranch = async (currentTag) => {
  * @returns {string} URL of the Release Candidate issue
  */
 const createIssue = async (octokit, currentTag, hotfixTag) => {
-  const body = `
-  **Script generated description. DO NOT MODIFY**
-
-  ## Metadata
-
-  - Release tag: ${hotfixTag}
-  - Branch: hotfix/${currentTag}
-
-  ## Actions
-
-  - To add fixes:
-    1. \`git checkout hotfix/${currentTag}\`
-    2. Check in fixes to the release branch.
-    3. (If applied) Cherry-pick the fix to \`master\`.
-  - To approve the push: Add \`QA Approved\` label and close the issue.
-  - To cancel the push: Close the issue directly.
-  `
+  const body =
+    '**Script generated description. DO NOT MODIFY**\n' +
+    '\n' +
+    '## Metadata\n' +
+    '\n' +
+    '- Release tag: ${hotfixTag}\n' +
+    '- Branch: hotfix/${currentTag}\n' +
+    '\n' +
+    '## Actions\n' +
+    '\n' +
+    '- To add fixes:\n' +
+    '\t1. `git checkout hotfix/${currentTag}`\n' +
+    '\t2. Check in fixes to the release branch.\n' +
+    '\t3. (If applied) Cherry-pick the fix to `master`.\n' +
+    '- To approve the push: Add `QA Approved` label and close the issue.\n' + 
+    '- To cancel the push: Close the issue directly.'
 
   const { owner, repo } = github.context.repo
   const { data: { html_url: issueUrl } } = await octokit.rest.issues.create({
