@@ -30,21 +30,22 @@ const createReleaseBranch = async (currentTag) => {
   const octokit = github.getOctokit(token)
   const { owner, repo } = github.context.repo
 
-  // Get the current ref
-  const { data: { object: { sha } } } = await octokit.rest.git.getRef({
-    owner,
-    repo,
-    ref: `tags/${currentTag}`
-  })
-  console.log(`SHA: ${sha}`)
-  
-  // Create the hotfix ref
-  await octokit.rest.git.createRef({
-    owner,
-    repo,
-    ref: `refs/heads/hotfix/${currentTag}`,
-    sha
-  })
+  const { data: tags } = await octokit.rest.repos.listTags({ owner, repo })
+  const existingTag = tags.find((tag) => tag.name === currentTag)
+  if (existingTag) {
+    const sha = existingTag.commit.sha
+    console.log(`SHA: ${sha}`)
+
+    // Create the hotfix ref
+    await octokit.rest.git.createRef({
+      owner,
+      repo,
+      ref: `refs/heads/hotfix/${currentTag}`,
+      sha
+    })
+  } else {
+    throw Error(`Could not find existing tag ${currentTag}`)
+  }
 }
 
 /**
