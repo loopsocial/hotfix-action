@@ -85,6 +85,19 @@ const createIssue = async (octokit, currentTag, hotfixTag) => {
 }
 
 /**
+ * Deletes the Hotfix Branch.
+ * @param {object} octokit Octokit
+ * @param {string} currentTag Current tag
+ */
+const deleteBranch = async (octokit, currentTag) => {
+  await octokit.rest.git.deleteRef({
+    owner,
+    repo,
+    ref: `heads/hotfix/${currentTag}`
+  })
+}
+
+/**
  * Posts to Slack via webhook.
  * @param {string} currentTag Current tag
  * @param {string} hotfixTag Hotfix tag
@@ -135,6 +148,9 @@ const run = async () => {
 
     // Create release branch
     await createReleaseBranch(currentTag)
+
+    // Delete hotfix branch
+    await deleteBranch(octokit, currentTag)
 
     // Create issue
     const issueUrl = await createIssue(octokit, currentTag, hotfixTag)
